@@ -1,0 +1,45 @@
+h1{
+    display: flex;
+    justify-content: center;
+}
+
+.vertex{
+    width:25px;
+    height:25px;
+    border: 0.5px solid black;
+}
+
+.visited{
+    width:25px;
+    height:25px;
+    border: 0.5px solid black;
+    background-color: aquamarine;
+}
+
+.wall{
+    width:25px;
+    height:25px;
+    border: 0.5px solid black;
+    background-color: rgb(14, 29, 29);
+}
+
+.startVertex{
+    width:25px;
+    height:25px;
+    border: 0.5px solid black;
+    background-color: red;
+}
+
+.endVertex{
+    width:25px;
+    height:25px;
+    border: 0.5px solid black;
+    background-color: blue
+}
+
+#graphContainer{
+    display: flex;
+    justify-content: center;
+}
+
+
