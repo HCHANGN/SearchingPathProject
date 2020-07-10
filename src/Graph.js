@@ -18,11 +18,13 @@ class Graph extends React.Component{
             shortestPath:[],
             speed:1,
             wall:[],
+            weight:[],
             keypress:false,
             cStart:false,
             cEnd:false,
             addWeightMode:false,
-            addWallMode:true
+            addWallMode:true,
+            addWeightNum:10
         }
 
         this.addVertex=this.addVertex.bind(this);
@@ -54,17 +56,26 @@ class Graph extends React.Component{
             this.state.adjacencyList[item].forEach(nVertex=>{
                 if(nVertex.node===vertex){
                     nVertex.weight=value;
+                    this.setState({
+                        weight:[...this.state.weight,nVertex.node]
+                    })
                 }
             })
         }
     }
 
     changeMode(mode){
-        if(mode==="wall"){
-            //this.s
+        if(mode==="weight"){
+            this.setState({
+                addWeightMode:true,
+                addWallMode:false
+            })
         }
         else{
-
+            this.setState({
+                addWeightMode:false,
+                addWallMode:true
+            })
         }
     }
 
@@ -105,6 +116,7 @@ class Graph extends React.Component{
             pathWeight:[],
             shortestPath:[],
             wall:[],
+            weight:[]
             //start:"0_0",
             //end:"5_5"
         })
@@ -321,10 +333,10 @@ class Graph extends React.Component{
         }
         let graphData = this.makeDrawData();
         //this.dijkstra();
-        this.addWeight("1_1",10);
-        this.addWeight("2_2",10);
-        this.addWeight("3_3",10);
-        this.addWeight("4_4",10);
+        // this.addWeight("1_1",10);
+        // this.addWeight("2_2",10);
+        // this.addWeight("3_3",10);
+        // this.addWeight("4_4",10);
         //console.log(this.state.adjacencyList);
         return(
             <div id="container">
@@ -332,8 +344,8 @@ class Graph extends React.Component{
                 <button onClick={this.DFSI}>Start DFS</button>
                 <button onClick={this.BFS}>Start BFS</button>
                 <button onClick={this.dijkstra}>Start Dijkstra</button>
-                <button>Add Weight</button>
-                <button>Add Wall</button>
+                <button onClick={()=>{this.changeMode("weight");}}>Add Weight</button>
+                <button onClick={()=>{this.changeMode("wall")}}>Add Wall</button>
                 <button onClick={this.resetAll}>Reset</button>
                 <div id="graphContainer" 
                     onMouseDown={(e)=>{
@@ -376,13 +388,29 @@ class Graph extends React.Component{
                         e.preventDefault();
                         if(this.state.keypress){
                             if(e.target.className==="vertex"){
-                                this.removeEdge(e.target.id);
+                                if(this.state.addWeightMode){
+                                    this.addWeight(e.target.id,this.state.addWeightNum);
+                                }
+                                else{
+                                    this.removeEdge(e.target.id);
+                                }
                             }
                             if(e.target.className==="visited"){
-                                this.removeEdge(e.target.id);
+                                if(this.state.addWeightMode){
+                                    this.addWeight(e.target.id,this.state.addWeightNum);
+                                }
+                                else{
+                                    this.removeEdge(e.target.id);
+                                }
                             }
                             if(e.target.className==="SPath"){
-                                this.removeEdge(e.target.id);
+                                //this.removeEdge(e.target.id);
+                                if(this.state.addWeightMode){
+                                    this.addWeight(e.target.id,this.state.addWeightNum);
+                                }
+                                else{
+                                    this.removeEdge(e.target.id);
+                                }
                             }
                             if(this.state.cStart){
                                 if(e.target.className!="endVertex"){
@@ -426,14 +454,19 @@ class Graph extends React.Component{
                                     else{
                                         if(this.state.pathWeight[0]){
                                             let weight = this.state.pathWeight.filter(item=>{return item[0]==vertex});
-                                            //console.log(weight[0]);
                                             if(weight[0][0]){
+                                                if(this.state.weight.indexOf(vertex)!=-1){
+                                                    return <div key={vertex} id={vertex} className="weight">{weight[0][1]}</div>
+                                                }
                                                 return <div key={vertex} id={vertex} className="visited">{weight[0][1]}</div>
                                             }
                                         }
                                         return <div key={vertex} id={vertex} className="visited"></div>
                                     }
                                 }
+                            }
+                            if(this.state.weight.indexOf(vertex)!=-1){
+                                return <div key={vertex} id={vertex} className="weight">{this.state.addWeightNum}</div>
                             }
                             return <div key={vertex} id={vertex} className="vertex"></div>
                         })}</div>
