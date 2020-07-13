@@ -2,6 +2,7 @@ import React from "react";
 import "./Graph.css";
 import PriorityQueue from "./priorityQueue";
 
+
 class Graph extends React.Component{
     constructor(props){
         super(props);
@@ -12,7 +13,7 @@ class Graph extends React.Component{
             h:20,
             start:"0_0",
             end:"5_5",
-            currentVertex:null,
+            currentAlgo:null,
             visitedPath:[],
             pathWeight:[],
             shortestPath:[],
@@ -24,7 +25,42 @@ class Graph extends React.Component{
             cEnd:false,
             addWeightMode:false,
             addWallMode:true,
-            addWeightNum:10
+            addWeightNum:10,
+            SearchResult:[],
+            DijkstraShortestPath:[]
+        }
+
+        this.setter=()=>{
+            this.setterId = setInterval(()=>{
+                this.state.currentAlgo="DFSBFS";
+                if(this.state.SearchResult.length!=0){
+                    let visitedV = this.state.SearchResult.shift();
+                    this.setState({
+                        visitedPath:[...this.state.visitedPath,visitedV]
+                    })
+                }
+                else{
+                    window.clearInterval(this.setterId);
+                }
+                //console.log(result.length);
+            },this.state.speed)
+        }
+
+        this.DijkstraSetter=()=>{
+            this.state.currentAlgo="Dijkstra";
+            this.setterId = setInterval(()=>{
+                if(this.state.SearchResult.length!=0){
+                    let visitedV = this.state.SearchResult.shift();
+                    this.setState({
+                        visitedPath:[...this.state.visitedPath,visitedV]
+                    })
+                }
+                else{
+                    window.clearInterval(this.setterId);
+                    this.setterShort(this.state.DijkstraShortestPath);
+                }
+                //console.log(result.length);
+            },this.state.speed)
         }
 
         this.addVertex=this.addVertex.bind(this);
@@ -39,6 +75,9 @@ class Graph extends React.Component{
         this.resetAll=this.resetAll.bind(this);
         this.dijkstra=this.dijkstra.bind(this);
         this.setterShort=this.setterShort.bind(this);
+        this.setSpeed=this.setSpeed.bind(this);
+        //this.setter=this.setter.bind(this);
+        //this.setAddWeightNum=this.setAddWeightNum.bind(this);
     }
 
     addVertex(vertex){
@@ -51,7 +90,6 @@ class Graph extends React.Component{
     }
 
     addWeight(vertex,value){
-        
         for(let item in this.state.adjacencyList){
             this.state.adjacencyList[item].forEach(nVertex=>{
                 if(nVertex.node===vertex){
@@ -152,6 +190,7 @@ class Graph extends React.Component{
         let result=[];
         let visited={};
         this.reset();
+        clearInterval(this.setterId);
 
         dataStack.push(this.state.start);
 
@@ -170,18 +209,9 @@ class Graph extends React.Component{
                 })
             }
         }
-        let setter = setInterval(()=>{
-            if(result.length!=0){
-                let visitedV = result.shift();
-                this.setState({
-                    visitedPath:[...this.state.visitedPath,visitedV]
-                })
-            }
-            else{
-                clearInterval(setter);
-            }
-            
-        },this.state.speed)
+        this.state.SearchResult=result;
+        this.setter();
+
         return result;
     }
 
@@ -190,7 +220,7 @@ class Graph extends React.Component{
         let visited={};
         let dataQueue=[];
         this.reset();
-        
+        clearInterval(this.setterId);
 
         dataQueue.push(this.state.start);
         while(dataQueue.length!=0){
@@ -208,19 +238,8 @@ class Graph extends React.Component{
                 })
             }
         }
-        let setter = setInterval(()=>{
-            if(result.length!=0){
-                let visitedV = result.shift();
-                this.setState({
-                    visitedPath:[...this.state.visitedPath,visitedV]
-                })
-            }
-            else{
-                clearInterval(setter);
-            }
-            
-        },this.state.speed)
-            
+        this.state.SearchResult=result;
+        this.setter();
         return result;
     }
 
@@ -233,7 +252,7 @@ class Graph extends React.Component{
         let path = [];
         let pathWeight = [];
         this.state.visitedPath=[];
-        //this.reset();
+        clearInterval(this.setterId);
 
         //build up initial state
         for(let vertex in this.state.adjacencyList){
@@ -286,22 +305,23 @@ class Graph extends React.Component{
         }
         shortestPath.shift();
         //console.log(shortestPath);
-
+        this.state.DijkstraShortestPath=shortestPath;
         //set animation data
-        let setter = setInterval(()=>{
-            if(path.length!=0){
-                let visitedV = path.shift();
-                this.setState({
-                    visitedPath:[...this.state.visitedPath,visitedV],
-                    
-                })
-            }
-            else{
-                clearInterval(setter);
-                this.setterShort(shortestPath);
-            }
+        this.state.SearchResult=path;
+        this.DijkstraSetter();
+        // this.setterId = setInterval(()=>{
+        //     if(path.length!=0){
+        //         let visitedV = path.shift();
+        //         this.setState({
+        //             visitedPath:[...this.state.visitedPath,visitedV],
+        //         })
+        //     }
+        //     else{
+        //         clearInterval(this.setterId);
+        //         this.setterShort(shortestPath);
+        //     }
             
-        },this.state.speed)
+        // },this.state.speed)
         
         //console.log(this.state.pathWeight);
         //console.log(pathWeight);
@@ -321,8 +341,16 @@ class Graph extends React.Component{
             clearInterval(setterShort);
         }
         
-    },this.state.speed)
+        },this.state.speed)
     }
+
+    setSpeed(value){
+        this.setState({
+            speed:Number(value)
+        })
+        console.log(this.state.speed);
+    }
+
 
     ///// View part
 
@@ -340,13 +368,29 @@ class Graph extends React.Component{
         //console.log(this.state.adjacencyList);
         return(
             <div id="container">
-                <h1>HiHi~</h1>
-                <button onClick={this.DFSI}>Start DFS</button>
-                <button onClick={this.BFS}>Start BFS</button>
-                <button onClick={this.dijkstra}>Start Dijkstra</button>
-                <button onClick={()=>{this.changeMode("weight");}}>Add Weight</button>
-                <button onClick={()=>{this.changeMode("wall")}}>Add Wall</button>
-                <button onClick={this.resetAll}>Reset</button>
+                <h1>Path Searching App</h1>
+                <div id="controlBar">
+                    <button onClick={this.DFSI}>Start DFS</button>
+                    <button onClick={this.BFS}>Start BFS</button>
+                    <button onClick={this.dijkstra}>Start Dijkstra</button>
+                    <button onClick={()=>{this.changeMode("weight");}}>Add Weight</button>
+                    <button onClick={()=>{this.changeMode("wall")}}>Add Wall</button>
+                    <button onClick={()=>{clearInterval(this.setterId)}}>Stop</button>
+                    <button onClick={this.resetAll}>Reset</button>
+                    <div id="speedRange">
+                        <div>- &nbsp; Time Step &nbsp; +</div>
+                        <input type="range" min="1" max="500" onChange={(e)=>{
+                            this.setSpeed(e.target.value);
+                            clearInterval(this.setterId);
+                            if(this.state.currentAlgo=="DFSBFS"){
+                                this.setter();
+                            }
+                            else if(this.state.currentAlgo==="Dijkstra"){
+                                this.DijkstraSetter();
+                            }
+                            }}></input>
+                    </div>
+                </div>
                 <div id="graphContainer" 
                     onMouseDown={(e)=>{
                         e.preventDefault();
@@ -415,12 +459,14 @@ class Graph extends React.Component{
                             if(this.state.cStart){
                                 if(e.target.className!="endVertex"){
                                     e.target.className="startVertex";
+                                    e.target.innerText="";
                                 }
                             
                             }
                             if(this.state.cEnd){
                                 if(e.target.className!="startVertex"){
                                     e.target.className="endVertex";
+                                    e.target.innerText="";
                                 }
                             }
                         }
@@ -428,10 +474,12 @@ class Graph extends React.Component{
                     onMouseOut={(e)=>{
                         e.preventDefault();
                         if(this.state.cStart){
-                            e.target.className="vertex"
+                            e.target.className="vertex";
+                            e.target.innerText="";
                         }
                         if(this.state.cEnd){
                             e.target.className="vertex"
+                            e.target.innerText="";
                         }
                     }}
                 >
