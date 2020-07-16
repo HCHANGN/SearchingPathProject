@@ -1,0 +1,115 @@
+a{
+    text-decoration: none;
+    color:rgb(14, 29, 29);
+}
+
+#homePageContainer{
+    padding-top: 70px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#homePageBanner{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    height:600px;
+    animation: fadeInOpacity 2s linear 0s 1;
+}
+
+#bannerBackground{
+    width:100%;
+    height:600px;
+    position:absolute;
+    top:70px;
+    right:0;
+    /* background: url("https://i.ibb.co/xS5VM63/BG2.gif") no-repeat center; */
+    background: url("https://i.ibb.co/b1LkvXW/BG3.gif") no-repeat;
+    z-index: -1;
+    opacity:0.5;
+}
+
+#backToTop{
+    width:40px;
+    height:40px;
+    position: fixed;
+    bottom:80px;
+    right:80px;
+    border-radius:20px;
+    background-color: grey;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: 300;
+    z-index: 10;
+}
+
+#bannerText{
+    font-size: 80px;
+    padding-bottom:100px;
+    font-weight: 500;
+    font-variant: normal;
+    text-shadow: 5px 5px 5px gray;
+}
+
+#bannerBtn button{
+    font-size: 30px;  
+}
+
+#bannerBtn{
+    width:25%;
+    display: flex;
+    justify-content: space-between;
+}
+
+#describeContentOne{
+    height:600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: gainsboro;
+}
+
+#describeContentTwo{
+    height:600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#describeContentThree{
+    height:600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#describeContentFour{
+    height:600px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOutOpacity {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
