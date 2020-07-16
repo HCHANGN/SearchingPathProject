@@ -61,6 +61,26 @@ class Graph extends React.Component{
                 else{
                     window.clearInterval(this.setterId);
                     this.setterShort(this.state.DijkstraShortestPath);
+                    // if(this.state.adjacencyListTemp){
+                    //     this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
+                    // }
+                }
+                //console.log(result.length);
+            },this.state.speed)
+        }
+
+        this.aStarSetter=()=>{
+            this.state.currentAlgo="aStar";
+            this.setterId = setInterval(()=>{
+                if(this.state.SearchResult.length!=0){
+                    let visitedV = this.state.SearchResult.shift();
+                    this.setState({
+                        visitedPath:[...this.state.visitedPath,visitedV]
+                    })
+                }
+                else{
+                    window.clearInterval(this.setterId);
+                    this.setterShort(this.state.DijkstraShortestPath);
                     if(this.state.adjacencyListTemp){
                         this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
                     }
@@ -266,7 +286,7 @@ class Graph extends React.Component{
         this.state.visitedPath=[];
         clearInterval(this.setterId);
 
-        this.state.adjacencyListTemp=JSON.parse(JSON.stringify(this.state.adjacencyList));
+        // this.state.adjacencyListTemp=JSON.parse(JSON.stringify(this.state.adjacencyList));
         
         //build up initial state
         for(let vertex in this.state.adjacencyList){
@@ -423,7 +443,7 @@ class Graph extends React.Component{
         this.state.DijkstraShortestPath=shortestPath;
         //set animation data
         this.state.SearchResult=path;
-        this.DijkstraSetter();
+        this.aStarSetter();
         return previous;
     }
 
@@ -482,6 +502,9 @@ class Graph extends React.Component{
                         else if(this.state.currentAlgo==="Dijkstra"){
                             this.DijkstraSetter();
                         }
+                        else if(this.state.currentAlgo==="aStar"){
+                            this.aStarSetter();
+                        }
                     }}>Resume</button>
                     <button onClick={()=>{clearInterval(this.setterId)}}>Pause</button>
                     <button onClick={this.resetAll}>Reset</button>
@@ -495,6 +518,9 @@ class Graph extends React.Component{
                             }
                             else if(this.state.currentAlgo==="Dijkstra"){
                                 this.DijkstraSetter();
+                            }
+                            else if(this.state.currentAlgo==="aStar"){
+                                this.aStarSetter();
                             }
                             }}></input>
                     </div>
