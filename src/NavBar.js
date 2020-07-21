@@ -49,12 +49,12 @@ class NavBar extends React.Component{
         return(
             <div id="navBarContainer" style={this.setOpacity()}>
                 <div id="navLogo">
-                    <Link to="/"><img src="https://cdn3.iconfinder.com/data/icons/faticons/32/grid-01-512.png" id="navIcon"></img></Link>
+                    <Link to="/" id="navIconLink"><img src="https://cdn3.iconfinder.com/data/icons/faticons/32/grid-01-512.png" id="navIcon"></img></Link>
                     {this.toggleLogoText()}
                 </div>
                 <div id="navBtn">
-                    <button id="navGitHub" onClick={()=>{window.open("https://github.com/HCHANGN/SearchingPathProject")}}>GitHub</button>
-                    <button id="navAbout">About</button>
+                    <img id="navGitHub" onClick={()=>{window.open("https://github.com/HCHANGN/SearchingPathProject")}} src="./img/GHIcon.svg"></img>
+                    <img id="navAbout" src="./img/InfoIcon.svg"></img>
                 </div>
             </div>
         )  

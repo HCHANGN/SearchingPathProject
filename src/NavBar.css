@@ -12,10 +12,16 @@ body{
     color:#0E1D1D;
     position:fixed;
     opacity: 1;
+    z-index: 10;
 }
 
 #navIcon{
-    width:50px;
+    width:45px;
+}
+
+#navIconLink{
+    display: flex;
+    align-items: center;
 }
 
 #navLogo{
@@ -25,9 +31,57 @@ body{
     align-items: center;
 }
 
+#navLogoText{
+    align-items: center;
+}
+
+#navIcon:hover{
+    animation: SpinLogo 0.5s linear 0s 1;
+}
+
 #navBtn{
     padding-right: 60px;
-    width:15%;
+    width:10%;
     display:flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+#navGitHub{
+    width:30px;
+    height:30px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#navGitHub img{
+    width:30px;
+    height:30px;
+}
+
+#navAbout{
+    width:30px;
+    height:30px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#navAbout img{
+    width:30px;
+    height:30px;
+}
+
+@keyframes SpinLogo {
+	0% {
+        transform-origin: center center;
+		transform: rotate(0deg);
+	}
+	100% {
+        transform-origin: center center;
+		transform: rotate(360deg);
+	}
 }

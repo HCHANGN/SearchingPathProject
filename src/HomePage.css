@@ -1,6 +1,6 @@
 a{
     text-decoration: none;
-    color:rgb(14, 29, 29);
+    color: inherit;
 }
 
 #homePageContainer{
@@ -15,20 +15,24 @@ a{
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    height:600px;
+    height:calc(100vh - 70px);
     animation: fadeInOpacity 2s linear 0s 1;
 }
 
 #bannerBackground{
     width:100%;
-    height:600px;
+    height:calc(100vh - 70px);
     position:absolute;
     top:70px;
     right:0;
     /* background: url("https://i.ibb.co/xS5VM63/BG2.gif") no-repeat center; */
-    background: url("https://i.ibb.co/b1LkvXW/BG3.gif") no-repeat;
+    /* background: url("https://i.ibb.co/b1LkvXW/BG3.gif") no-repeat center; */
+    /* background: url("https://i.ibb.co/0hpXm9C/BG4.gif") no-repeat center; */
+    background: url("./img/BG4.gif") no-repeat center;
+    background-size: cover;
+    filter: grayscale(1);
     z-index: -1;
-    opacity:0.5;
+    opacity:0.2;
 }
 
 #backToTop{
@@ -45,6 +49,8 @@ a{
     font-size: 30px;
     font-weight: 300;
     z-index: 10;
+    background: url("./img/toTopIcon.svg") no-repeat center;
+    background-size: cover;
 }
 
 #bannerText{
@@ -56,7 +62,32 @@ a{
 }
 
 #bannerBtn button{
-    font-size: 30px;  
+    font-size: 30px;
+    box-shadow: 5px 5px 5px gray;
+}
+
+#bannerTurtorialBtn{
+    border:2px solid black;
+    background-color: white;
+    color: black;
+}
+
+#bannerTurtorialBtn:hover{
+    border:2px solid black;
+    background-color: black;
+    color: white;
+}
+
+#bannerStartBtn{
+    border:2px solid black;
+    background-color: black;
+    color: white;
+}
+
+#bannerStartBtn:hover{
+    border:2px solid black;
+    background-color: white;
+    color: black;
 }
 
 #bannerBtn{
@@ -66,7 +97,7 @@ a{
 }
 
 #describeContentOne{
-    height:600px;
+    height:100vh;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -74,24 +105,80 @@ a{
 }
 
 #describeContentTwo{
-    height:600px;
+    height:100vh;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
 }
 
 #describeContentThree{
-    height:600px;
+    height:100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: gainsboro;
+}
+
+#describeContentFour{
+    height:100vh;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
 }
 
-#describeContentFour{
-    height:600px;
+#describeContentFive{
+    height:100vh;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+    background-color: gainsboro;
+}
+
+#imgIntro{
+    width:300px;
+    height:300px;
+    background: url("./img/BGIntro3.gif") no-repeat center;
+    background-size: cover;
+}
+
+#imgDFS{
+    width:300px;
+    height:300px;
+    background: url("./img/DFSIMG.gif") no-repeat center;
+    background-size: cover;
+}
+
+#imgBFS{
+    width:300px;
+    height:300px;
+    background: url("./img/BFSIMG.gif") no-repeat center;
+    background-size: cover;
+}
+
+#imgDijk{
+    width:300px;
+    height:300px;
+    background: url("./img/DijkIMG.gif") no-repeat center;
+    background-size: cover;
+}
+
+#imgAstar{
+    width:400px;
+    height:200px;
+    background: url("./img/BGAStar2.gif") no-repeat center;
+    background-size: cover;
+}
+
+.desDetailDiv{
+    width:40%;
+}
+
+.desTitle{
+    font-size: 40px;
+}
+
+.desDetail{
+    font-size: 25px;
 }
 
 
@@ -112,4 +199,16 @@ a{
 	100% {
 		opacity: 0;
 	}
+}
+
+@keyframes flowUp{
+    0%{
+        opacity: 0;
+        margin-top: 500px;
+    }
+
+    100%{
+        opacity: 1;
+        margin-top: 0px;
+    }
 }

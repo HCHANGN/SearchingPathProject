@@ -16,7 +16,13 @@ module.exports = {
             {
                 test: /\.css$/i,
                 use: ['style-loader', 'css-loader'],
-            }
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf|png|svg|jpg|gif)$/,
+                use: {
+                  loader: 'url-loader'
+                }
+              }
         ]
     },
     devServer: {
