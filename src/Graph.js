@@ -705,7 +705,7 @@ class Graph extends React.Component{
                 </div>
                 
                 <div id="graphContainer" 
-                    onMouseDown={(e)=>{
+                    onPointerDown={(e)=>{
                         e.preventDefault();
                         this.setState({
                             keypress:true
@@ -721,7 +721,7 @@ class Graph extends React.Component{
                             })
                         }
                     }}
-                    onMouseUp={(e)=>{
+                    onPointerUp={(e)=>{
                         e.preventDefault();
                         this.setState({
                             keypress:false
@@ -743,7 +743,7 @@ class Graph extends React.Component{
                             //this.reset();
                         }
                     }}
-                    onMouseMove={(e)=>{
+                    onPointerMove={(e)=>{
                         e.preventDefault();
                         if(this.state.keypress){
                             if(e.target.className==="vertex"){
@@ -786,7 +786,7 @@ class Graph extends React.Component{
                             }
                         }
                     }}
-                    onMouseOut={(e)=>{
+                    onPointerOut={(e)=>{
                         e.preventDefault();
                         if(this.state.cStart){
                             if(e.target.className==="endVertex"){

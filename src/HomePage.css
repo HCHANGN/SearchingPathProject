@@ -219,7 +219,17 @@ a{
 }
 
 @media (max-width:770px){
+    #bannerText{
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    #bannerBtn{
+        width:100%;
+    }
+
     #describeContentOne{
+        height:calc(120vh);
         flex-direction: column;
     }
     
@@ -239,7 +249,7 @@ a{
         flex-direction: column;
     }
     .desTitle{
-        font-size: 30px;
+        font-size: 25px;
     }
 
     .desDetailDiv{
@@ -253,7 +263,7 @@ a{
     }
 
     .desDetail{
-        font-size: 25px;
+        font-size: 20px;
     }
 
     #imgIntro{
