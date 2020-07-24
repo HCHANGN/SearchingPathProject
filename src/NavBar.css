@@ -85,3 +85,13 @@ body{
 		transform: rotate(360deg);
 	}
 }
+
+@media (max-width:770px){
+    #navBtn{
+        width:20%;     
+    }
+
+    #navLogoText{
+        display:none;
+    }
+}

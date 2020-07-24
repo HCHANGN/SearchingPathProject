@@ -10,7 +10,7 @@ class Graph extends React.Component{
             init:false,
             adjacencyList:{},
             adjacencyListTemp:null,
-            w:40,
+            w:Math.floor(window.innerWidth/25-5),
             h:15,
             start:"0_0",
             end:"5_5",
@@ -33,12 +33,14 @@ class Graph extends React.Component{
             introDivToggle:"none",
             actualCalTime:0,
             totalVisitedVertex:0,
-            drawingState:false
+            drawingState:false,
+            selectedAlgo:null,
+            isPlaying:false
         }
 
         this.setter=()=>{
             this.setterId = setInterval(()=>{
-                this.state.currentAlgo="DFSBFS";
+                //this.state.currentAlgo="DFSBFS";
                 if(this.state.SearchResult.length!=0){
                     let visitedV = this.state.SearchResult.shift();
                     this.setState({
@@ -47,13 +49,32 @@ class Graph extends React.Component{
                 }
                 else{
                     window.clearInterval(this.setterId);
+                    this.state.isPlaying=false;
                 }
                 //console.log(result.length);
             },this.state.speed)
         }
 
         this.DijkstraSetter=()=>{
-            this.state.currentAlgo="Dijkstra";
+            //this.state.currentAlgo="Dijkstra";
+            this.setterId = setInterval(()=>{
+                if(this.state.SearchResult.length!=0){
+                    let visitedV = this.state.SearchResult.shift();
+                    this.setState({
+                        visitedPath:[...this.state.visitedPath,visitedV]
+                    })
+                }
+                else{
+                    window.clearInterval(this.setterId);
+                    this.setterShort(this.state.DijkstraShortestPath);
+                    this.state.isPlaying=false;
+                }
+            },this.state.speed)
+        }
+
+        this.aStarSetter=()=>{
+            //this.state.currentAlgo="aStar";
+            this.state.drawingState=true;
             this.setterId = setInterval(()=>{
                 if(this.state.SearchResult.length!=0){
                     let visitedV = this.state.SearchResult.shift();
@@ -67,27 +88,8 @@ class Graph extends React.Component{
                     // if(this.state.adjacencyListTemp){
                     //     this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
                     // }
-                }
-            },this.state.speed)
-        }
-
-        this.aStarSetter=()=>{
-            this.state.currentAlgo="aStar";
-            this.state.drawingState=true;
-            this.setterId = setInterval(()=>{
-                if(this.state.SearchResult.length!=0){
-                    let visitedV = this.state.SearchResult.shift();
-                    this.setState({
-                        visitedPath:[...this.state.visitedPath,visitedV]
-                    })
-                }
-                else{
-                    window.clearInterval(this.setterId);
-                    this.setterShort(this.state.DijkstraShortestPath);
-                    if(this.state.adjacencyListTemp){
-                        this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
-                    }
                     this.state.drawingState=false;
+                    this.state.isPlaying=false;
                 }
                 //console.log(result.length);
             },this.state.speed)
@@ -107,8 +109,26 @@ class Graph extends React.Component{
         this.setterShort=this.setterShort.bind(this);
         this.setSpeed=this.setSpeed.bind(this);
         this.aStar=this.aStar.bind(this);
+        this.selectAlgo=this.selectAlgo.bind(this);
+        this.listenToResize=this.listenToResize.bind(this);
         //this.setter=this.setter.bind(this);
         //this.setAddWeightNum=this.setAddWeightNum.bind(this);
+    }
+
+    componentDidMount(){
+        window.addEventListener("resize", this.listenToResize);
+    }
+
+    componentWillUnmount(){
+        //window.removeEventListener("resize",this.listenToResize);
+    }
+
+    listenToResize(){
+        console.log(Math.floor(window.innerWidth/25-5));
+        this.state.w=Math.floor(window.innerWidth/25-5);
+        this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
+        this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
+        this.resetAll();
     }
 
     addVertex(vertex){
@@ -223,6 +243,8 @@ class Graph extends React.Component{
         let dataStack=[];
         let result=[];
         let visited={};
+        this.state.currentAlgo="DFSBFS";
+        //this.state.weight=[];
         this.reset();
         clearInterval(this.setterId);
 
@@ -244,7 +266,7 @@ class Graph extends React.Component{
             }
         }
         this.state.SearchResult=result;
-        this.setter();
+        //this.setter();
         this.state.actualCalTime=performance.now()-startTime;
         this.state.totalVisitedVertex=result.length;
         return result;
@@ -255,6 +277,8 @@ class Graph extends React.Component{
         let result=[];
         let visited={};
         let dataQueue=[];
+        this.state.currentAlgo="DFSBFS";
+        //this.state.weight=[];
         this.reset();
         clearInterval(this.setterId);
 
@@ -275,7 +299,7 @@ class Graph extends React.Component{
             }
         }
         this.state.SearchResult=result;
-        this.setter();
+        //this.setter();
         this.state.actualCalTime=performance.now()-startTime;
         this.state.totalVisitedVertex=result.length;
         return result;
@@ -291,6 +315,7 @@ class Graph extends React.Component{
         let path = [];
         let pathWeight = [];
         this.state.visitedPath=[];
+        this.state.currentAlgo="Dijkstra";
         clearInterval(this.setterId);
         if(this.state.drawingState){
             if(this.state.adjacencyListTemp){
@@ -357,7 +382,7 @@ class Graph extends React.Component{
         this.state.DijkstraShortestPath=shortestPath;
         //set animation data
         this.state.SearchResult=path;
-        this.DijkstraSetter();
+        //this.DijkstraSetter();
         // this.setterId = setInterval(()=>{
         //     if(path.length!=0){
         //         let visitedV = path.shift();
@@ -388,6 +413,7 @@ class Graph extends React.Component{
         let path = [];
         let pathWeight = [];
         this.state.visitedPath=[];
+        this.state.currentAlgo="aStar";
         if(this.setterId){
             console.log(this.setterId);
         }
@@ -461,9 +487,10 @@ class Graph extends React.Component{
         this.state.DijkstraShortestPath=shortestPath;
         //set animation data
         this.state.SearchResult=path;
-        this.aStarSetter();
+        //this.aStarSetter();
         this.state.actualCalTime=performance.now()-startTime;
         this.state.totalVisitedVertex=path.length;
+        this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
         return previous;
     }
 
@@ -490,6 +517,24 @@ class Graph extends React.Component{
         })
     }
 
+    selectAlgo(name){
+        if(name=="DFS"){
+            this.DFSI();
+        }
+        else if(name=="BFS"){
+            this.BFS();
+        }
+        else if(name=="Dijk"){
+            this.dijkstra();
+        }
+        else if(name=="Astar"){
+            this.aStar();
+        }
+        else{
+            console.log("need to select algo!");
+        }
+    }
+
 
     ///// View part
 
@@ -503,50 +548,78 @@ class Graph extends React.Component{
         return(
             <div id="container">
                 <div id="controlBar">
+                    {/* <div id="algoControlSelectDiv">
+                        <select name="algo" id="algoSelect" onChange={(e)=>{this.selectAlgo(e.target.value)}}>
+                            <option selected value="notYetSelect">--Select your Algorithm--</option>
+                            <option value="DFS">Depth First Search</option>
+                            <option value="BFS">Breadth First Search</option>
+                            <option value="Dijk">Dijkstra Algorithm</option>
+                            <option value="Astar">A* Algorithm</option>
+                        </select>
+                    </div> */}
                     <div id="algoControl">
-                        <div id="algoControlTitle">Run Algorithm</div>
-                        <div id="algoControlBtn">
+                        <div id="algoControlTitle">Select Algorithm</div>
+                        {/* <div id="algoControlBtn">
                             <button onClick={this.DFSI}>Start DFS</button>
                             <button onClick={this.BFS}>Start BFS</button>
                             <button onClick={this.dijkstra}>Start Dijkstra</button>
                             <button onClick={this.aStar}>Start A*</button>
+                        </div> */}
+                        <div id="algoControlSelectDiv">
+                            <select name="algo" id="algoSelect" onChange={(e)=>{this.state.selectedAlgo=e.target.value}}>
+                                <option value="notYetSelect">--Select your Algorithm--</option>
+                                <option value="DFS">Depth First Search</option>
+                                <option value="BFS">Breadth First Search</option>
+                                <option value="Dijk">Dijkstra Algorithm</option>
+                                <option value="Astar">A* Algorithm</option>
+                            </select>
                         </div>
                         <div id="calResult">
-                        <div id="searchTimeResult">
-                            <div>
-                                Actual search Time: {this.state.actualCalTime} ms
+                            <div id="searchTimeResult">
+                                <div>
+                                    Actual search Time: {this.state.actualCalTime.toFixed(2)} ms
+                                </div>
+                            </div>
+                            <div id="visitedVertexResult">
+                                <div>
+                                    Total visited vertex: {this.state.totalVisitedVertex}
+                                </div>
                             </div>
                         </div>
-                        <div id="visitedVertexResult">
-                            <div>
-                                Total visited vertex: {this.state.totalVisitedVertex}
-                            </div>
-                        </div>
-                    </div>
                     </div>
 
                     <div id="playControl">
-                        <div id="playControlTitle">Animate control panel</div>
+                        <div id="playControlTitle">Control panel</div>
                         <div id="playControlBtn">
-                            <button onClick={()=>{
-                                clearInterval(this.setterId);
-                                if(this.state.currentAlgo=="DFSBFS"){
-                                    this.setter();
-                                }
-                                else if(this.state.currentAlgo==="Dijkstra"){
-                                    this.DijkstraSetter();
-                                }
-                                else if(this.state.currentAlgo==="aStar"){
-                                    this.aStarSetter();
-                                }
-                            }}>Resume</button>
-                            <button onClick={()=>{clearInterval(this.setterId)}}>Pause</button>
-                            <button onClick={this.resetAll}>Reset</button>
+                            <div id="controlBtnSet">
+                                <div onClick={()=>{
+                                    clearInterval(this.setterId);
+                                    if(!this.state.isPlaying){
+                                        this.selectAlgo(this.state.selectedAlgo);
+                                        this.state.isPlaying=true;
+                                    }
+                                    if(this.state.currentAlgo=="DFSBFS"){
+                                        this.setter();
+                                    }
+                                    else if(this.state.currentAlgo==="Dijkstra"){
+                                        this.DijkstraSetter();
+                                    }
+                                    else if(this.state.currentAlgo==="aStar"){
+                                        this.aStarSetter();
+                                    }
+                                    else{
+                                        this.state.isPlaying=false;
+                                    }
+                                }}><img src="./img/playIcon.svg" id="playIcon"></img></div>
+                                <div onClick={()=>{clearInterval(this.setterId)}}><img src="./img/pauseIcon.svg" id="pauseIcon"></img></div>
+                                <div onClick={this.resetAll}><img src="./img/restartIcon.svg" id="restartIcon"></img></div>
+                            </div>
                             <div id="speedRange">
                                 <div>- &nbsp; Time Step &nbsp; +</div>
                                 <input type="range" min="1" max="500" onChange={(e)=>{
                                     this.setSpeed(e.target.value);
                                     clearInterval(this.setterId);
+                                    //this.selectAlgo(this.state.selectedAlgo);
                                     if(this.state.currentAlgo=="DFSBFS"){
                                         this.setter();
                                     }
@@ -558,15 +631,33 @@ class Graph extends React.Component{
                                     }
                                     }}></input>
                             </div>
+                            {/* <div id="calResult">
+                                <div id="searchTimeResult">
+                                    <div>
+                                        Actual search Time: {this.state.actualCalTime} ms
+                                    </div>
+                                </div>
+                                <div id="visitedVertexResult">
+                                    <div>
+                                        Total visited vertex: {this.state.totalVisitedVertex}
+                                    </div>
+                                </div>
+                            </div> */}
                         </div>
                     </div>
 
                     <div id="addControl">
-                        <div id="addControlTitle">Add item to graph</div>
-                        <div id="addControlBtn">
-                            <button onClick={()=>{this.changeMode("weight");}}>Add Weight</button>
-                            <button onClick={()=>{this.changeMode("wall")}}>Add Wall</button>
+                        <div id="addControlTitle">Select add mode</div>
+                        <div id="addModeSelectDiv">
+                            <select name="addMode" id="modeSelect" onChange={(e)=>{this.changeMode(e.target.value);}}>
+                                <option value="wall">Wall</option>
+                                <option value="weight">Weight</option>
+                            </select>
                         </div>
+                        {/* <div id="addControlBtn">
+                            <button onClick={()=>{this.changeMode("weight");}}>Weight</button>
+                            <button onClick={()=>{this.changeMode("wall")}}>Wall</button>
+                        </div> */}
                     </div>
                 </div>
                 <div id="introIcon" onClick={()=>{

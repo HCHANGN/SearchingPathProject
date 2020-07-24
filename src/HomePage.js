@@ -17,7 +17,7 @@ class HomePage extends React.Component{
             <div id="homePageBanner">
                 <div id="bannerText">Path Searching App</div>
                 <div id="bannerBtn">
-                    <button onClick={()=>{this.contentOne.scrollIntoView({ behavior: "smooth" });}} id="bannerTurtorialBtn">Turtorial</button>
+                    <button onClick={()=>{this.contentOne.scrollIntoView({ behavior: "smooth" });}} id="bannerTurtorialBtn">Tutorial</button>
                     <button id="bannerStartBtn"><Link id="StartBtnLink" to="/graph">Start</Link></button>
                 </div>              
             </div>
@@ -26,8 +26,8 @@ class HomePage extends React.Component{
                 <div className="desDetailDiv">
                     <h2 className="desTitle">What is this?</h2>
                     <div className="desDetail">
-                        <p>Path Searching App is a demonstration app which visualized various type of graph search alogorithm using simple grid!</p>
-                        <p>Searching methods:</p>
+                        <div>Path Searching App is a demonstration app which visualized various type of graph search alogorithm using simple grid!</div>
+                        <div>Searching methods:</div>
 
                         <button onClick={()=>{this.contentTwo.scrollIntoView({ behavior: "smooth" });}}>Depth First Search (DFS)</button>
                         <button onClick={()=>{this.contentThree.scrollIntoView({ behavior: "smooth" });}}>Breadth First Search (BFS)</button>

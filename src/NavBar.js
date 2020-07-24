@@ -49,7 +49,7 @@ class NavBar extends React.Component{
         return(
             <div id="navBarContainer" style={this.setOpacity()}>
                 <div id="navLogo">
-                    <Link to="/" id="navIconLink"><img src="https://cdn3.iconfinder.com/data/icons/faticons/32/grid-01-512.png" id="navIcon"></img></Link>
+                    <Link to="/" id="navIconLink"><img src="./img/gridLogo.png" id="navIcon"></img></Link>
                     {this.toggleLogoText()}
                 </div>
                 <div id="navBtn">
