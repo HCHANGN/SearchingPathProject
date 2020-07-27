@@ -10,8 +10,8 @@ class Graph extends React.Component{
             init:false,
             adjacencyList:{},
             adjacencyListTemp:null,
-            w:Math.floor(window.innerWidth/25-5),
-            h:15,
+            w:Math.floor(window.innerWidth/30-5),
+            h:Math.floor(window.innerHeight/40-5),
             start:"0_0",
             end:"5_5",
             currentAlgo:null,
@@ -35,7 +35,9 @@ class Graph extends React.Component{
             totalVisitedVertex:0,
             drawingState:false,
             selectedAlgo:null,
-            isPlaying:false
+            isPlaying:false,
+            currentPointing:null,
+            pointerTemp:null
         }
 
         this.setter=()=>{
@@ -117,6 +119,32 @@ class Graph extends React.Component{
 
     componentDidMount(){
         window.addEventListener("resize", this.listenToResize);
+        window.addEventListener("pointermove", (e)=>{
+            this.state.currentPointing=e.target.className;
+            if(this.state.currentPointing===""){
+                this.state.keypress=false;
+                if(this.state.cStart){
+                    this.state.pointerTemp.className="startVertex";
+                    this.state.cStart=false;
+                    this.state.start=this.state.pointerTemp.id;
+                    this.resetAll();
+                }
+                else if(this.state.cEnd){
+                    this.state.pointerTemp.className="endVertex";
+                    this.state.cEnd=false;
+                    this.state.end=this.state.pointerTemp.id;
+                    this.resetAll();
+                }
+            }
+            else{
+                if(this.state.cStart){
+                    this.state.pointerTemp=e.target;
+                }
+                else if(this.state.cEnd){
+                    this.state.pointerTemp=e.target;
+                }
+            }
+        })
     }
 
     componentWillUnmount(){
@@ -124,8 +152,9 @@ class Graph extends React.Component{
     }
 
     listenToResize(){
-        console.log(Math.floor(window.innerWidth/25-5));
-        this.state.w=Math.floor(window.innerWidth/25-5);
+        console.log(Math.floor(window.innerWidth/30-5));
+        this.state.w=Math.floor(window.innerWidth/30-5);
+        this.state.h=Math.floor(window.innerHeight/40-5);
         this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
         this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
         this.resetAll();
@@ -788,13 +817,13 @@ class Graph extends React.Component{
                     }}
                     onPointerOut={(e)=>{
                         e.preventDefault();
+                        //console.log(e.target.className);
                         if(this.state.cStart){
                             if(e.target.className==="endVertex"){
                                 e.target.className="endVertex";
                                 e.target.innerText="";
                             }
                             else{
-                                console.log(e.target.className);
                                 e.target.className="vertex";
                                 e.target.innerText="";
                             }

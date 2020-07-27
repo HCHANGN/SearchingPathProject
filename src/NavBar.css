@@ -29,6 +29,7 @@ body{
     font-size: 30px;
     display:flex;
     align-items: center;
+    cursor: pointer;
 }
 
 #navLogoText{
@@ -54,6 +55,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 #navGitHub img{
@@ -68,6 +70,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 #navAbout img{

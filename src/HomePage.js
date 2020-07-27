@@ -29,10 +29,10 @@ class HomePage extends React.Component{
                         <div>Path Searching App is a demonstration app which visualized various type of graph search alogorithm using simple grid!</div>
                         <div>Searching methods:</div>
 
-                        <button onClick={()=>{this.contentTwo.scrollIntoView({ behavior: "smooth" });}}>Depth First Search (DFS)</button>
-                        <button onClick={()=>{this.contentThree.scrollIntoView({ behavior: "smooth" });}}>Breadth First Search (BFS)</button>
-                        <button onClick={()=>{this.contentFour.scrollIntoView({ behavior: "smooth" });}}>Dijkstra's Alogorithm</button>
-                        <button onClick={()=>{this.contentFive.scrollIntoView({ behavior: "smooth" });}}>A* Alogorithm</button>
+                        <button onClick={()=>{this.contentTwo.scrollIntoView({ behavior: "smooth" });}}>DFS</button>
+                        <button onClick={()=>{this.contentThree.scrollIntoView({ behavior: "smooth" });}}>BFS</button>
+                        <button onClick={()=>{this.contentFour.scrollIntoView({ behavior: "smooth" });}}>Dijkstra</button>
+                        <button onClick={()=>{this.contentFive.scrollIntoView({ behavior: "smooth" });}}>A*</button>
                     </div>
                 </div>
             </div>
