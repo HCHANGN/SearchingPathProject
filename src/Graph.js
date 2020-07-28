@@ -37,7 +37,9 @@ class Graph extends React.Component{
             selectedAlgo:null,
             isPlaying:false,
             currentPointing:null,
-            pointerTemp:null
+            pointerTemp:null,
+            touchTarget:null,
+            preTouchTarget:null
         }
 
         this.setter=()=>{
@@ -118,6 +120,118 @@ class Graph extends React.Component{
     }
 
     componentDidMount(){
+        window.addEventListener("touchstart",(e)=>{
+                this.setState({
+                    keypress:true
+                })
+                if(e.target.className==="startVertex"){
+                    this.setState({
+                        cStart:true
+                    })
+                }
+                if(e.target.className==="endVertex"){
+                    this.setState({
+                        cEnd:true
+                    })
+                }
+        });
+        window.addEventListener("touchmove",(e)=>{
+            this.state.touchTarget=document.elementFromPoint(e.targetTouches[0].clientX,e.targetTouches[0].clientY);
+            //console.log(target);
+            //console.log(this.state.preTouchTarget);
+            if(this.state.cStart||this.state.cEnd){
+                if(this.state.preTouchTarget!=this.state.touchTarget&&this.state.preTouchTarget!=null){
+                    if(this.state.cStart){
+                        if(this.state.preTouchTarget.className==="endVertex"){
+                            this.state.preTouchTarget.className="endVertex";
+                            this.state.preTouchTarget.innerText="";
+                        }
+                        else{
+                            this.state.preTouchTarget.className="vertex";
+                            this.state.preTouchTarget.innerText="";
+                        }
+                    }
+                    if(this.state.cEnd){
+                        if(this.state.preTouchTarget.className==="startVertex"){
+                            this.state.preTouchTarget.className="startVertex";
+                            this.state.preTouchTarget.innerText="";
+                        }
+                        else{
+                            this.state.preTouchTarget.className="vertex";
+                            this.state.preTouchTarget.innerText="";
+                        }
+                    }
+                }
+                this.state.preTouchTarget=this.state.touchTarget;
+            }
+            /////
+
+            if(this.state.keypress){
+                if(this.state.touchTarget.className==="vertex"){
+                    if(this.state.addWeightMode){
+                        this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
+                    }
+                    else{
+                        this.removeEdge(this.state.touchTarget.id);
+                    }
+                }
+                if(this.state.touchTarget.className==="visited"){
+                    if(this.state.addWeightMode){
+                        this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
+                    }
+                    else{
+                        this.removeEdge(this.state.touchTarget.id);
+                    }
+                }
+                if(this.state.touchTarget.className==="SPath"){
+                    //this.removeEdge(e.target.id);
+                    if(this.state.addWeightMode){
+                        this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
+                    }
+                    else{
+                        this.removeEdge(this.state.touchTarget.id);
+                    }
+                }
+                if(this.state.cStart){
+                    if(this.state.touchTarget.className!="endVertex"){
+                        this.state.touchTarget.className="startVertex";
+                        this.state.touchTarget.innerText="";
+                    }
+                
+                }
+                if(this.state.cEnd){
+                    if(this.state.touchTarget.className!="startVertex"){
+                        this.state.touchTarget.className="endVertex";
+                        this.state.touchTarget.innerText="";
+                    }
+                }
+            }
+            /////
+        });
+        window.addEventListener("touchend",()=>{
+            if(this.state.touchTarget){
+                let targetId=this.state.touchTarget.id;
+                this.setState({
+                    keypress:false
+                })
+                if(this.state.cStart){
+                    this.setState({
+                        cStart:false,
+                        start:targetId
+                    })
+                    this.resetAll();
+                    //this.reset();
+                }
+                if(this.state.cEnd){
+                    this.setState({
+                        cEnd:false,
+                        end:targetId
+                    })
+                    this.resetAll();
+                    //this.reset();
+                }
+            }
+        });
         window.addEventListener("resize", this.listenToResize);
         window.addEventListener("pointermove", (e)=>{
             this.state.currentPointing=e.target.className;
@@ -595,7 +709,11 @@ class Graph extends React.Component{
                             <button onClick={this.aStar}>Start A*</button>
                         </div> */}
                         <div id="algoControlSelectDiv">
-                            <select name="algo" id="algoSelect" onChange={(e)=>{this.state.selectedAlgo=e.target.value}}>
+                            <select name="algo" id="algoSelect" onChange={(e)=>{
+                                this.state.selectedAlgo=e.target.value;
+                                clearInterval(this.setterId);
+                                this.state.isPlaying=false;
+                                }}>
                                 <option value="notYetSelect">--Select your Algorithm--</option>
                                 <option value="DFS">Depth First Search</option>
                                 <option value="BFS">Breadth First Search</option>
@@ -734,7 +852,7 @@ class Graph extends React.Component{
                 </div>
                 
                 <div id="graphContainer" 
-                    onPointerDown={(e)=>{
+                    onMouseDown={(e)=>{
                         e.preventDefault();
                         this.setState({
                             keypress:true
@@ -750,7 +868,7 @@ class Graph extends React.Component{
                             })
                         }
                     }}
-                    onPointerUp={(e)=>{
+                    onMouseUp={(e)=>{
                         e.preventDefault();
                         this.setState({
                             keypress:false
@@ -772,7 +890,7 @@ class Graph extends React.Component{
                             //this.reset();
                         }
                     }}
-                    onPointerMove={(e)=>{
+                    onMouseMove={(e)=>{
                         e.preventDefault();
                         if(this.state.keypress){
                             if(e.target.className==="vertex"){
@@ -815,7 +933,7 @@ class Graph extends React.Component{
                             }
                         }
                     }}
-                    onPointerOut={(e)=>{
+                    onMouseOut={(e)=>{
                         e.preventDefault();
                         //console.log(e.target.className);
                         if(this.state.cStart){

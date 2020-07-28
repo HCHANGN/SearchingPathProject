@@ -67,7 +67,7 @@ class HomePage extends React.Component{
                 </div>
                 <div className="desDetailDiv">
                     <h2 className="desTitle">A* Alogorithm</h2>
-                    <div className="desDetail">A* alogorithm is a advenced version of Dijkstra, it will guess the possible shortest way first, if we choose the
+                    <div className="desDetail">A* alogorithm is an advanced version of Dijkstra, it will guess the possible shortest way first, if we choose the
                      guess properly, it will also guarantee the find path is shortest from start to target and with lower visited vertex than Dijkstra.
                      </div>
                 </div>
