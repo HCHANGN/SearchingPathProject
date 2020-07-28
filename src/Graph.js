@@ -269,13 +269,11 @@ class Graph extends React.Component{
     listenToResize(){
         console.log(Math.floor(window.innerWidth/30-5));
         this.state.w=Math.floor(window.innerWidth/30-5);
-        this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
-        this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
         if(this.state.w!=this.state.preW){
             //this.state.w=Math.floor(window.innerWidth/30-5);
             this.state.h=Math.floor(window.innerHeight/40-5);
-            // this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
-            // this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
+            this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
+            this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
             this.resetAll();
             this.state.preW=this.state.w;
         }
