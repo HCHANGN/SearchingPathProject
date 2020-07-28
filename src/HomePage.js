@@ -26,7 +26,7 @@ class HomePage extends React.Component{
                 <div className="desDetailDiv">
                     <h2 className="desTitle">What is this?</h2>
                     <div className="desDetail">
-                        <div>Path Searching App is a demonstration app which visualized various type of graph search alogorithm using simple grid!</div>
+                        <div>Path Searching App is a demonstration app which can visualize various type of graph search algorithm using simple grid!</div>
                         <div>Searching methods:</div>
 
                         <button onClick={()=>{this.contentTwo.scrollIntoView({ behavior: "smooth" });}}>DFS</button>
@@ -55,8 +55,8 @@ class HomePage extends React.Component{
             </div>
             <div id="describeContentFour" ref={(line)=>{this.contentFour=line}}>
                 <div className="desDetailDiv">
-                    <h2 className="desTitle">Dijkstra's Alogorithm</h2>
-                    <div className="desDetail">Dijkstra's alogorithm is differnet from DFS and BFS, it will take the weight in account,
+                    <h2 className="desTitle">Dijkstra's Algorithm</h2>
+                    <div className="desDetail">Dijkstra's algorithm is differnet from DFS and BFS, it will take the weight in account,
                      and search the lowest total weight vertex first until find the target. so it can guarantee the find path is shortest from start to target.
                      </div>
                 </div>
@@ -66,8 +66,8 @@ class HomePage extends React.Component{
                 <div id="imgAstar">
                 </div>
                 <div className="desDetailDiv">
-                    <h2 className="desTitle">A* Alogorithm</h2>
-                    <div className="desDetail">A* alogorithm is an advanced version of Dijkstra, it will guess the possible shortest way first, if we choose the
+                    <h2 className="desTitle">A* Algorithm</h2>
+                    <div className="desDetail">A* algorithm is an advanced version of Dijkstra, it will guess the possible shortest way first, if we choose the
                      guess properly, it will also guarantee the find path is shortest from start to target and with lower visited vertex than Dijkstra.
                      </div>
                 </div>
