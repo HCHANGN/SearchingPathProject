@@ -274,6 +274,7 @@ class Graph extends React.Component{
         this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
         if(this.state.w!=this.state.preW){
             this.resetAll();
+            this.state.preW=this.state.w;
         }
     }
 
