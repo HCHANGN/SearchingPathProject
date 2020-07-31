@@ -54,7 +54,7 @@ class NavBar extends React.Component{
                 </div>
                 <div id="navBtn">
                     <img id="navGitHub" onClick={()=>{window.open("https://github.com/HCHANGN/SearchingPathProject")}} src="./img/GHIcon.svg"></img>
-                    <img id="navAbout" src="./img/InfoIcon.svg"></img>
+                    <img id="navAbout"  onClick={()=>{window.open("https://hchangn.github.io/")}} src="./img/InfoIcon.svg"></img>
                 </div>
             </div>
         )  

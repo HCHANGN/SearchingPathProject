@@ -116,6 +116,7 @@ class Graph extends React.Component{
         this.aStar=this.aStar.bind(this);
         this.selectAlgo=this.selectAlgo.bind(this);
         this.listenToResize=this.listenToResize.bind(this);
+        this.addRandomItem=this.addRandomItem.bind(this);
         //this.setter=this.setter.bind(this);
         //this.setAddWeightNum=this.setAddWeightNum.bind(this);
     }
@@ -293,9 +294,9 @@ class Graph extends React.Component{
             this.state.adjacencyList[item].forEach(nVertex=>{
                 if(nVertex.node===vertex){
                     nVertex.weight=value;
-                    this.setState({
-                        weight:[...this.state.weight,nVertex.node]
-                    })
+                    this.setState(state=>({
+                        weight:[...state.weight,nVertex.node]
+                    }))
                 }
             })
         }
@@ -323,9 +324,9 @@ class Graph extends React.Component{
             })
         })
         this.state.adjacencyList[vertex]=[];
-        this.setState({
-            wall:[...this.state.wall,vertex]
-        })
+        this.setState(state =>({
+            wall:[...state.wall,vertex]
+        }));
         //console.log(this.state.adjacencyList);
     }
 
@@ -471,9 +472,6 @@ class Graph extends React.Component{
                 this.state.drawingState=false;
             }
         }
-
-        // this.state.adjacencyListTemp=JSON.parse(JSON.stringify(this.state.adjacencyList));
-        
         //build up initial state
         for(let vertex in this.state.adjacencyList){
             if(vertex===this.state.start){
@@ -502,10 +500,8 @@ class Graph extends React.Component{
             }
             path.push(current.val);
             pathWeight.push([current.val,distances[current.val]]);
-            //console.log(path);
             this.state.adjacencyList[current.val].forEach(linkedVertex=>{
                 let totalDis = linkedVertex.weight+distances[current.val];
-                //pathWeight.push([linkedVertex.node,totalDis]);
                 if(distances[linkedVertex.node]>totalDis){
                     distances[linkedVertex.node]=totalDis;
                     previous[linkedVertex.node]=current.val;
@@ -514,7 +510,6 @@ class Graph extends React.Component{
             })
         }
         this.state.pathWeight=pathWeight;
-        //console.log(this.state.pathWeight);
 
         //set shortest path
         let shortestPath = [];
@@ -526,28 +521,9 @@ class Graph extends React.Component{
             tempV=previous[tempV];
         }
         shortestPath.shift();
-        //console.log(shortestPath);
         this.state.DijkstraShortestPath=shortestPath;
         //set animation data
         this.state.SearchResult=path;
-        //this.DijkstraSetter();
-        // this.setterId = setInterval(()=>{
-        //     if(path.length!=0){
-        //         let visitedV = path.shift();
-        //         this.setState({
-        //             visitedPath:[...this.state.visitedPath,visitedV],
-        //         })
-        //     }
-        //     else{
-        //         clearInterval(this.setterId);
-        //         this.setterShort(shortestPath);
-        //     }
-            
-        // },this.state.speed)
-        
-        //console.log(this.state.pathWeight);
-        //console.log(pathWeight);
-        // console.log(distances);
         this.state.actualCalTime=performance.now()-startTime;
         this.state.totalVisitedVertex=path.length;
         return previous;
@@ -683,6 +659,45 @@ class Graph extends React.Component{
         }
     }
 
+    addRandomItem(){
+        this.setState({
+            init:false,
+            adjacencyList:{},
+            visitedPath:[],
+            pathWeight:[],
+            shortestPath:[],
+            wall:[],
+            weight:[],
+            SearchResult:[],
+            DijkstraShortestPath:[]
+            //start:"0_0",
+            //end:"5_5"
+        },()=>{
+            if(this.state.addWallMode){
+                console.log("add random wall!");
+                    for( let item in this.state.adjacencyList){
+                        let randomNum = Math.random();
+                        if(randomNum<=0.3){
+                            if(item!==this.state.start&&item!==this.state.end){
+                                this.removeEdge(item);
+                            }
+                        }
+                    }
+            }
+            else if(this.state.addWeightMode){
+                console.log("add random weight!");
+                for( let item in this.state.adjacencyList){
+                    let randomNum = Math.random();
+                        if(randomNum<=0.3){
+                            if(item!==this.state.start&&item!==this.state.end){
+                                this.addWeight(item,this.state.addWeightNum);
+                            }
+                        }
+                }
+            }
+        });
+    }
+
 
     ///// View part
 
@@ -690,6 +705,7 @@ class Graph extends React.Component{
         if(!this.state.init){
             this.initGraph();
             this.state.init=true;
+            //console.log(this.state.adjacencyList);
         }
         let graphData = this.makeDrawData();
 
@@ -783,18 +799,6 @@ class Graph extends React.Component{
                                     }
                                     }}></input>
                             </div>
-                            {/* <div id="calResult">
-                                <div id="searchTimeResult">
-                                    <div>
-                                        Actual search Time: {this.state.actualCalTime} ms
-                                    </div>
-                                </div>
-                                <div id="visitedVertexResult">
-                                    <div>
-                                        Total visited vertex: {this.state.totalVisitedVertex}
-                                    </div>
-                                </div>
-                            </div> */}
                         </div>
                     </div>
 
@@ -806,10 +810,9 @@ class Graph extends React.Component{
                                 <option value="weight">Weight</option>
                             </select>
                         </div>
-                        {/* <div id="addControlBtn">
-                            <button onClick={()=>{this.changeMode("weight");}}>Weight</button>
-                            <button onClick={()=>{this.changeMode("wall")}}>Wall</button>
-                        </div> */}
+                        <div id="addRandomBtn">
+                            <button onClick={()=>{this.addRandomItem();}}>Add Random</button>
+                        </div>
                     </div>
                 </div>
                 <div id="introIcon" onClick={()=>{
@@ -884,7 +887,6 @@ class Graph extends React.Component{
                                 start:e.target.id
                             })
                             this.resetAll();
-                            //this.reset();
                         }
                         if(this.state.cEnd){
                             this.setState({
@@ -892,7 +894,6 @@ class Graph extends React.Component{
                                 end:e.target.id
                             })
                             this.resetAll();
-                            //this.reset();
                         }
                     }}
                     onMouseMove={(e)=>{
@@ -940,7 +941,6 @@ class Graph extends React.Component{
                     }}
                     onMouseOut={(e)=>{
                         e.preventDefault();
-                        //console.log(e.target.className);
                         if(this.state.cStart){
                             if(e.target.className==="endVertex"){
                                 e.target.className="endVertex";
