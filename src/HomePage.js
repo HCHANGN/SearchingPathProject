@@ -26,7 +26,7 @@ class HomePage extends React.Component{
                 <div className="desDetailDiv">
                     <h2 className="desTitle">What is this?</h2>
                     <div className="desDetail">
-                        <div>Path Searching App is a demonstration app which can visualize various type of graph search algorithm using simple grid!</div>
+                        <div>Path Searching App is a demonstration app which can visualize various type of graph search algorithm using <button onClick={()=>{this.contentGrid.scrollIntoView({ behavior: "smooth" });}}>Grid</button>.</div>
                         <div>Searching methods:</div>
 
                         <button onClick={()=>{this.contentTwo.scrollIntoView({ behavior: "smooth" });}}>DFS</button>
@@ -35,6 +35,15 @@ class HomePage extends React.Component{
                         <button onClick={()=>{this.contentFive.scrollIntoView({ behavior: "smooth" });}}>A*</button>
                     </div>
                 </div>
+            </div>
+            {/* new */}
+            <div id="describeContentGrid" ref={(line)=>{this.contentGrid=line}}>
+                <div className="desDetailDiv">
+                    <h2 className="desTitle">Behind the grid</h2>
+                    <div className="desDetail">The graph data structure is actually show behind the grid in app and we simplify the weight of four edges connect to same vertex to be same.
+                     </div>
+                </div>
+                <div id="imgGrid"></div>
             </div>
             <div id="describeContentTwo" ref={(line)=>{this.contentTwo=line}}>
                 <div className="desDetailDiv">
