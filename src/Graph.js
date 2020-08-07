@@ -1,7 +1,6 @@
 import React from "react";
 import "./Graph.css";
-import PriorityQueue from "./priorityQueue";
-
+import WeightedAlgo from "./WeightedAlgo";
 
 class Graph extends React.Component{
     constructor(props){
@@ -29,7 +28,7 @@ class Graph extends React.Component{
             addWallMode:true,
             addWeightNum:10,
             SearchResult:[],
-            DijkstraShortestPath:[],
+            shortestPathSetterData:[],
             currentTarget:null,
             introDivToggle:"none",
             actualCalTime:0,
@@ -44,24 +43,9 @@ class Graph extends React.Component{
         }
 
         this.setter=()=>{
-            this.setterId = setInterval(()=>{
-                //this.state.currentAlgo="DFSBFS";
-                if(this.state.SearchResult.length!=0){
-                    let visitedV = this.state.SearchResult.shift();
-                    this.setState({
-                        visitedPath:[...this.state.visitedPath,visitedV]
-                    })
-                }
-                else{
-                    window.clearInterval(this.setterId);
-                    this.state.isPlaying=false;
-                }
-                //console.log(result.length);
-            },this.state.speed)
-        }
-
-        this.DijkstraSetter=()=>{
-            //this.state.currentAlgo="Dijkstra";
+            if(this.state.currentAlgo==="aStar"){
+                this.state.drawingState=true;
+            }
             this.setterId = setInterval(()=>{
                 if(this.state.SearchResult.length!=0){
                     let visitedV = this.state.SearchResult.shift();
@@ -71,32 +55,14 @@ class Graph extends React.Component{
                 }
                 else{
                     window.clearInterval(this.setterId);
-                    this.setterShort(this.state.DijkstraShortestPath);
                     this.state.isPlaying=false;
+                    if(this.state.currentAlgo==="Dijkstra"||this.state.currentAlgo==="aStar"){
+                        this.setterShort(this.state.shortestPathSetterData);
+                        if(this.state.currentAlgo==="aStar"){
+                            this.state.drawingState=false;
+                        }
+                    }
                 }
-            },this.state.speed)
-        }
-
-        this.aStarSetter=()=>{
-            //this.state.currentAlgo="aStar";
-            this.state.drawingState=true;
-            this.setterId = setInterval(()=>{
-                if(this.state.SearchResult.length!=0){
-                    let visitedV = this.state.SearchResult.shift();
-                    this.setState({
-                        visitedPath:[...this.state.visitedPath,visitedV]
-                    })
-                }
-                else{
-                    window.clearInterval(this.setterId);
-                    this.setterShort(this.state.DijkstraShortestPath);
-                    // if(this.state.adjacencyListTemp){
-                    //     this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
-                    // }
-                    this.state.drawingState=false;
-                    this.state.isPlaying=false;
-                }
-                //console.log(result.length);
             },this.state.speed)
         }
 
@@ -116,31 +82,60 @@ class Graph extends React.Component{
         this.aStar=this.aStar.bind(this);
         this.selectAlgo=this.selectAlgo.bind(this);
         this.listenToResize=this.listenToResize.bind(this);
+        this.listenStartPress=this.listenStartPress.bind(this);
+        this.listenTouchMove=this.listenTouchMove.bind(this);
+        this.listenTouchEnd=this.listenTouchEnd.bind(this);
+        this.listenPointerMove=this.listenPointerMove.bind(this);
+        this.listenMouseUp=this.listenMouseUp.bind(this);
+        this.listenMouseMove=this.listenMouseMove.bind(this);
+        this.listenMouseOut=this.listenMouseOut.bind(this);
         this.addRandomItem=this.addRandomItem.bind(this);
-        //this.setter=this.setter.bind(this);
-        //this.setAddWeightNum=this.setAddWeightNum.bind(this);
+        this.setEuclideanDisToGraphWeight=this.setEuclideanDisToGraphWeight.bind(this);
     }
 
     componentDidMount(){
-        window.addEventListener("touchstart",(e)=>{
-                this.setState({
-                    keypress:true
-                })
-                if(e.target.className==="startVertex"){
-                    this.setState({
-                        cStart:true
-                    })
-                }
-                if(e.target.className==="endVertex"){
-                    this.setState({
-                        cEnd:true
-                    })
-                }
-        });
-        window.addEventListener("touchmove",(e)=>{
-            this.state.touchTarget=document.elementFromPoint(e.targetTouches[0].clientX,e.targetTouches[0].clientY);
-            //console.log(target);
-            //console.log(this.state.preTouchTarget);
+        window.addEventListener("touchstart", this.listenStartPress);
+        window.addEventListener("touchmove", this.listenTouchMove);
+        window.addEventListener("touchend", this.listenTouchEnd);
+        window.addEventListener("resize", this.listenToResize);
+        window.addEventListener("pointermove", this.listenPointerMove);
+    }
+    componentWillUnmount(){
+        window.removeEventListener("touchstart", this.listenStartPress);
+        window.removeEventListener("touchmove", this.listenTouchMove);
+        window.removeEventListener("touchend", this.listenTouchEnd);
+        window.removeEventListener("resize", this.listenToResize);
+        window.removeEventListener("pointermove", this.listenPointerMove);
+    }
+
+    listenToResize(){
+        console.log(Math.floor(window.innerWidth/30-5));
+        this.state.w=Math.floor(window.innerWidth/30-5);
+        if(this.state.w!=this.state.preW){
+            this.state.h=Math.floor(window.innerHeight/40-5);
+            this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
+            this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
+            this.resetAll();
+            this.state.preW=this.state.w;
+        }
+    }
+
+    listenStartPress(e){
+        this.state.keypress=true;
+        if(e.target.className==="startVertex"){
+            this.state.cStart=true;
+        }
+        else if(e.target.className==="endVertex"){
+            this.state.cEnd=true;
+        }
+    }
+
+    listenTouchMove(e){
+        this.state.touchTarget=document.elementFromPoint(e.targetTouches[0].clientX,e.targetTouches[0].clientY);
+        if(this.state.touchTarget.id.split("_").length===1){
+            this.state.keypress=false;
+        }
+        if(this.state.keypress){
             if(this.state.cStart||this.state.cEnd){
                 if(this.state.preTouchTarget!=this.state.touchTarget&&this.state.preTouchTarget!=null){
                     if(this.state.cStart){
@@ -166,77 +161,155 @@ class Graph extends React.Component{
                 }
                 this.state.preTouchTarget=this.state.touchTarget;
             }
-            /////
 
+            if(this.state.touchTarget.className==="vertex"){
+                if(this.state.addWeightMode){
+                    this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
+                }
+                else{
+                    this.removeEdge(this.state.touchTarget.id);
+                }
+            }
+            if(this.state.touchTarget.className==="visited"){
+                if(this.state.addWeightMode){
+                    this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
+                }
+                else{
+                    this.removeEdge(this.state.touchTarget.id);
+                }
+            }
+            if(this.state.touchTarget.className==="SPath"){
+                if(this.state.addWeightMode){
+                    this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
+                }
+                else{
+                    this.removeEdge(this.state.touchTarget.id);
+                }
+            }
+            if(this.state.cStart){
+                if(this.state.touchTarget.className!="endVertex"){
+                    this.state.touchTarget.className="startVertex";
+                    this.state.touchTarget.innerText="";
+                }
+            
+            }
+            if(this.state.cEnd){
+                if(this.state.touchTarget.className!="startVertex"){
+                    this.state.touchTarget.className="endVertex";
+                    this.state.touchTarget.innerText="";
+                }
+            }
+        }
+    }
+
+    listenTouchEnd(){
+        if(this.state.touchTarget){
+            let targetId=null;
             if(this.state.keypress){
-                if(this.state.touchTarget.className==="vertex"){
-                    if(this.state.addWeightMode){
-                        this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
-                    }
-                    else{
-                        this.removeEdge(this.state.touchTarget.id);
-                    }
+                targetId=this.state.touchTarget.id;
+                this.state.keypress=false;
+            }
+            else{
+                targetId=this.state.preTouchTarget.id;
+            }
+            
+            if(this.state.cStart){
+                this.state.cStart=false;
+                this.state.start=targetId;
+                this.resetAll();
+            }
+            if(this.state.cEnd){
+                this.state.cEnd=false;
+                this.state.end=targetId;
+                this.resetAll();
+            }
+        }
+    }
+
+    listenMouseUp(e){
+        e.preventDefault();
+        this.state.keypress=false;
+        if(this.state.cStart){
+            this.state.cStart=false;
+            this.state.start=e.target.id;
+            this.resetAll();
+        }
+        if(this.state.cEnd){
+            this.state.cEnd=false;
+            this.state.end=e.target.id;
+            this.resetAll();
+        }
+    }
+
+    listenMouseMove(e){
+        e.preventDefault();
+        if(this.state.keypress){
+            if(e.target.className==="vertex"){
+                if(this.state.addWeightMode){
+                    this.addWeight(e.target.id,this.state.addWeightNum);
                 }
-                if(this.state.touchTarget.className==="visited"){
-                    if(this.state.addWeightMode){
-                        this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
-                    }
-                    else{
-                        this.removeEdge(this.state.touchTarget.id);
-                    }
-                }
-                if(this.state.touchTarget.className==="SPath"){
-                    //this.removeEdge(e.target.id);
-                    if(this.state.addWeightMode){
-                        this.addWeight(this.state.touchTarget.id,this.state.addWeightNum);
-                    }
-                    else{
-                        this.removeEdge(this.state.touchTarget.id);
-                    }
-                }
-                if(this.state.cStart){
-                    if(this.state.touchTarget.className!="endVertex"){
-                        this.state.touchTarget.className="startVertex";
-                        this.state.touchTarget.innerText="";
-                    }
-                
-                }
-                if(this.state.cEnd){
-                    if(this.state.touchTarget.className!="startVertex"){
-                        this.state.touchTarget.className="endVertex";
-                        this.state.touchTarget.innerText="";
-                    }
+                else{
+                    this.removeEdge(e.target.id);
                 }
             }
-            /////
-        });
-        window.addEventListener("touchend",()=>{
-            if(this.state.touchTarget){
-                let targetId=this.state.touchTarget.id;
-                this.setState({
-                    keypress:false
-                })
-                if(this.state.cStart){
-                    this.setState({
-                        cStart:false,
-                        start:targetId
-                    })
-                    this.resetAll();
-                    //this.reset();
+            if(e.target.className==="visited"){
+                if(this.state.addWeightMode){
+                    this.addWeight(e.target.id,this.state.addWeightNum);
                 }
-                if(this.state.cEnd){
-                    this.setState({
-                        cEnd:false,
-                        end:targetId
-                    })
-                    this.resetAll();
-                    //this.reset();
+                else{
+                    this.removeEdge(e.target.id);
                 }
             }
-        });
-        window.addEventListener("resize", this.listenToResize);
-        window.addEventListener("pointermove", (e)=>{
-            this.state.currentPointing=e.target.className;
+            if(e.target.className==="SPath"){
+                if(this.state.addWeightMode){
+                    this.addWeight(e.target.id,this.state.addWeightNum);
+                }
+                else{
+                    this.removeEdge(e.target.id);
+                }
+            }
+            if(this.state.cStart){
+                if(e.target.className!="endVertex"){
+                    e.target.className="startVertex";
+                    e.target.innerText="";
+                }
+            
+            }
+            if(this.state.cEnd){
+                if(e.target.className!="startVertex"){
+                    e.target.className="endVertex";
+                    e.target.innerText="";
+                }
+            }
+        }
+    }
+
+    listenMouseOut(e){
+        e.preventDefault();
+        if(this.state.cStart){
+            if(e.target.className==="endVertex"){
+                e.target.className="endVertex";
+                e.target.innerText="";
+            }
+            else{
+                e.target.className="vertex";
+                e.target.innerText="";
+            }
+        }
+        if(this.state.cEnd){
+            if(e.target.className==="startVertex"){
+                e.target.className="startVertex";
+                e.target.innerText="";
+            }
+            else{
+                e.target.className="vertex";
+                e.target.innerText="";
+            }
+        }
+    }
+
+    listenPointerMove(e){
+        this.state.currentPointing=e.target.className;
             if(this.state.currentPointing===""){
                 this.state.keypress=false;
                 if(this.state.cStart){
@@ -260,24 +333,6 @@ class Graph extends React.Component{
                     this.state.pointerTemp=e.target;
                 }
             }
-        })
-    }
-
-    componentWillUnmount(){
-        //window.removeEventListener("resize",this.listenToResize);
-    }
-
-    listenToResize(){
-        console.log(Math.floor(window.innerWidth/30-5));
-        this.state.w=Math.floor(window.innerWidth/30-5);
-        if(this.state.w!=this.state.preW){
-            //this.state.w=Math.floor(window.innerWidth/30-5);
-            this.state.h=Math.floor(window.innerHeight/40-5);
-            this.state.start=`${Math.floor(this.state.w/3)}_${Math.floor(this.state.h/2)}`;
-            this.state.end=`${Math.floor(this.state.w*2/3)}_${Math.floor(this.state.h/2)}`;
-            this.resetAll();
-            this.state.preW=this.state.w;
-        }
     }
 
     addVertex(vertex){
@@ -327,7 +382,6 @@ class Graph extends React.Component{
         this.setState(state =>({
             wall:[...state.wall,vertex]
         }));
-        //console.log(this.state.adjacencyList);
     }
 
     initGraph(){
@@ -356,9 +410,7 @@ class Graph extends React.Component{
             wall:[],
             weight:[],
             SearchResult:[],
-            DijkstraShortestPath:[]
-            //start:"0_0",
-            //end:"5_5"
+            shortestPathSetterData:[]
         })
     }
 
@@ -393,7 +445,6 @@ class Graph extends React.Component{
         let result=[];
         let visited={};
         this.state.currentAlgo="DFSBFS";
-        //this.state.weight=[];
         this.reset();
         clearInterval(this.setterId);
 
@@ -415,7 +466,6 @@ class Graph extends React.Component{
             }
         }
         this.state.SearchResult=result;
-        //this.setter();
         this.state.actualCalTime=performance.now()-startTime;
         this.state.totalVisitedVertex=result.length;
         return result;
@@ -427,7 +477,6 @@ class Graph extends React.Component{
         let visited={};
         let dataQueue=[];
         this.state.currentAlgo="DFSBFS";
-        //this.state.weight=[];
         this.reset();
         clearInterval(this.setterId);
 
@@ -448,23 +497,16 @@ class Graph extends React.Component{
             }
         }
         this.state.SearchResult=result;
-        //this.setter();
         this.state.actualCalTime=performance.now()-startTime;
         this.state.totalVisitedVertex=result.length;
         return result;
     }
 
-    ///Dijkstra!!!!
-
     dijkstra(){
         let startTime=performance.now();
-        let distances = {};
-        let pQueue = new PriorityQueue();
-        let previous = {};
-        let path = [];
-        let pathWeight = [];
         this.state.visitedPath=[];
         this.state.currentAlgo="Dijkstra";
+        let weightedAlgo = new WeightedAlgo(this.state.adjacencyList,this.state.start,this.state.end);
         clearInterval(this.setterId);
         if(this.state.drawingState){
             if(this.state.adjacencyListTemp){
@@ -472,79 +514,19 @@ class Graph extends React.Component{
                 this.state.drawingState=false;
             }
         }
-        //build up initial state
-        for(let vertex in this.state.adjacencyList){
-            if(vertex===this.state.start){
-                distances[vertex]=0;
-                pQueue.enqueue(vertex,0);
-            }
-            else{
-                distances[vertex]=Infinity;
-                pQueue.enqueue(vertex,Infinity);
-            }
-            previous[vertex]=null;
-        }
-
-        //start looping queue
-        
-        while(pQueue.values.length!=0){
-            let current = pQueue.dequeue();
-            if(current.val==="0_0"&&current.priority===Infinity){
-                break;
-            }
-            if(current.val==="0_1"&&current.priority===Infinity){
-                break;
-            }
-            if(current.val===this.state.end){
-                break;
-            }
-            path.push(current.val);
-            pathWeight.push([current.val,distances[current.val]]);
-            this.state.adjacencyList[current.val].forEach(linkedVertex=>{
-                let totalDis = linkedVertex.weight+distances[current.val];
-                if(distances[linkedVertex.node]>totalDis){
-                    distances[linkedVertex.node]=totalDis;
-                    previous[linkedVertex.node]=current.val;
-                    pQueue.enqueue(linkedVertex.node,totalDis);
-                }
-            })
-        }
-        this.state.pathWeight=pathWeight;
-
-        //set shortest path
-        let shortestPath = [];
-        let tempV = previous[this.state.end];
-
+        weightedAlgo.setupInitState();
+        weightedAlgo.searchingShortestPathToEachVertex();
+        this.state.pathWeight=weightedAlgo.pathWeight;
         this.state.shortestPath=[];
-        while(tempV!=null){
-            shortestPath.unshift(tempV);
-            tempV=previous[tempV];
-        }
-        shortestPath.shift();
-        this.state.DijkstraShortestPath=shortestPath;
-        //set animation data
-        this.state.SearchResult=path;
+        weightedAlgo.setShortestPath();
+        this.state.shortestPathSetterData=weightedAlgo.shortestPath;
+        this.state.SearchResult=weightedAlgo.path;
         this.state.actualCalTime=performance.now()-startTime;
-        this.state.totalVisitedVertex=path.length;
-        return previous;
+        this.state.totalVisitedVertex=weightedAlgo.path.length;
+        return null;
     }
-
-    aStar(){
-        let startTime=performance.now();
-        let distances = {};
-        let pQueue = new PriorityQueue();
-        let previous = {};
-        let path = [];
-        let pathWeight = [];
-        this.state.visitedPath=[];
-        this.state.currentAlgo="aStar";
-        if(this.setterId){
-            console.log(this.setterId);
-        }
-        clearInterval(this.setterId);
-
-        this.state.adjacencyListTemp=JSON.parse(JSON.stringify(this.state.adjacencyList));
-
+    
+    setEuclideanDisToGraphWeight(){
         let startx = this.state.start.split("_")[0];
         let starty = this.state.start.split("_")[1];
         let endx = this.state.end.split("_")[0];
@@ -559,79 +541,41 @@ class Graph extends React.Component{
                 item.weight+=hWeight;
             })
         }
-
-        //build up initial state
-        for(let vertex in this.state.adjacencyList){
-            if(vertex===this.state.start){
-                distances[vertex]=0;
-                pQueue.enqueue(vertex,0);
-            }
-            else{
-                distances[vertex]=Infinity;
-                pQueue.enqueue(vertex,Infinity);
-            }
-            previous[vertex]=null;
-        }
-
-        //start looping queue
-        while(pQueue.values.length!=0){
-            let current = pQueue.dequeue();
-            if(current.val==="0_0"&&current.priority===Infinity){
-                break;
-            }
-            if(current.val==="0_1"&&current.priority===Infinity){
-                break;
-            }
-            if(current.val===this.state.end){
-                break;
-            }
-            path.push(current.val);
-            pathWeight.push([current.val,distances[current.val]]);
-            this.state.adjacencyList[current.val].forEach(linkedVertex=>{
-                let totalDis = linkedVertex.weight+distances[current.val];
-                if(distances[linkedVertex.node]>totalDis){
-                    distances[linkedVertex.node]=totalDis;
-                    previous[linkedVertex.node]=current.val;
-                    pQueue.enqueue(linkedVertex.node,totalDis);
-                }
-            })
-        }
-        this.state.pathWeight=pathWeight;
-
-        //set shortest path
-        let shortestPath = [];
-        let tempV = previous[this.state.end];
-
-        this.state.shortestPath=[];
-        while(tempV!=null){
-            shortestPath.unshift(tempV);
-            tempV=previous[tempV];
-        }
-        shortestPath.shift();
-        this.state.DijkstraShortestPath=shortestPath;
-        //set animation data
-        this.state.SearchResult=path;
-        //this.aStarSetter();
-        this.state.actualCalTime=performance.now()-startTime;
-        this.state.totalVisitedVertex=path.length;
-        this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
-        return previous;
     }
 
+    aStar(){
+        let startTime=performance.now();
+        this.state.visitedPath=[];
+        this.state.currentAlgo="aStar";
+        let weightedAlgo = new WeightedAlgo(this.state.adjacencyList,this.state.start,this.state.end);
+        clearInterval(this.setterId);
+        this.state.adjacencyListTemp=JSON.parse(JSON.stringify(this.state.adjacencyList));
+        this.setEuclideanDisToGraphWeight();
+        weightedAlgo.setupInitState();
+        weightedAlgo.searchingShortestPathToEachVertex();
+        this.state.pathWeight=weightedAlgo.pathWeight;
+        this.state.shortestPath=[];
+        weightedAlgo.setShortestPath();
+        this.state.shortestPathSetterData=weightedAlgo.shortestPath;
+        this.state.SearchResult=weightedAlgo.path;
+        this.state.actualCalTime=performance.now()-startTime;
+        this.state.totalVisitedVertex=weightedAlgo.path.length;
+        this.state.adjacencyList=JSON.parse(JSON.stringify(this.state.adjacencyListTemp));
+        return null;
+    }
 
     //shortest path animation setter
     setterShort(shortestPath){ 
         let setterShort = setInterval(()=>{
-        if(shortestPath.length!=0){
-            let visitedV = shortestPath.shift();
-            this.setState({
-                shortestPath:[...this.state.shortestPath,visitedV]
-            })
-        }
-        else{
-            clearInterval(setterShort);
-        }
-        
+            if(shortestPath.length!=0){
+                let visitedV = shortestPath.shift();
+                this.setState({
+                    shortestPath:[...this.state.shortestPath,visitedV]
+                })
+            }
+            else{
+                clearInterval(setterShort);
+            }
         },this.state.speed)
     }
 
@@ -655,7 +599,7 @@ class Graph extends React.Component{
             this.aStar();
         }
         else{
-            console.log("need to select algo!");
+            alert("Please select algorithm first!");
         }
     }
 
@@ -669,9 +613,7 @@ class Graph extends React.Component{
             wall:[],
             weight:[],
             SearchResult:[],
-            DijkstraShortestPath:[]
-            //start:"0_0",
-            //end:"5_5"
+            shortestPathSetterData:[]
         },()=>{
             if(this.state.addWallMode){
                 console.log("add random wall!");
@@ -698,37 +640,18 @@ class Graph extends React.Component{
         });
     }
 
-
-    ///// View part
-
     render(){
         if(!this.state.init){
             this.initGraph();
             this.state.init=true;
-            //console.log(this.state.adjacencyList);
         }
         let graphData = this.makeDrawData();
 
         return(
             <div id="container">
                 <div id="controlBar">
-                    {/* <div id="algoControlSelectDiv">
-                        <select name="algo" id="algoSelect" onChange={(e)=>{this.selectAlgo(e.target.value)}}>
-                            <option selected value="notYetSelect">--Select your Algorithm--</option>
-                            <option value="DFS">Depth First Search</option>
-                            <option value="BFS">Breadth First Search</option>
-                            <option value="Dijk">Dijkstra Algorithm</option>
-                            <option value="Astar">A* Algorithm</option>
-                        </select>
-                    </div> */}
                     <div id="algoControl">
                         <div id="algoControlTitle">Select Algorithm</div>
-                        {/* <div id="algoControlBtn">
-                            <button onClick={this.DFSI}>Start DFS</button>
-                            <button onClick={this.BFS}>Start BFS</button>
-                            <button onClick={this.dijkstra}>Start Dijkstra</button>
-                            <button onClick={this.aStar}>Start A*</button>
-                        </div> */}
                         <div id="algoControlSelectDiv">
                             <select name="algo" id="algoSelect" onChange={(e)=>{
                                 this.state.selectedAlgo=e.target.value;
@@ -765,15 +688,7 @@ class Graph extends React.Component{
                                     if(!this.state.isPlaying){
                                         this.selectAlgo(this.state.selectedAlgo);
                                         this.state.isPlaying=true;
-                                    }
-                                    if(this.state.currentAlgo=="DFSBFS"){
                                         this.setter();
-                                    }
-                                    else if(this.state.currentAlgo==="Dijkstra"){
-                                        this.DijkstraSetter();
-                                    }
-                                    else if(this.state.currentAlgo==="aStar"){
-                                        this.aStarSetter();
                                     }
                                     else{
                                         this.state.isPlaying=false;
@@ -787,16 +702,7 @@ class Graph extends React.Component{
                                 <input type="range" min="1" max="500" onChange={(e)=>{
                                     this.setSpeed(e.target.value);
                                     clearInterval(this.setterId);
-                                    //this.selectAlgo(this.state.selectedAlgo);
-                                    if(this.state.currentAlgo=="DFSBFS"){
-                                        this.setter();
-                                    }
-                                    else if(this.state.currentAlgo==="Dijkstra"){
-                                        this.DijkstraSetter();
-                                    }
-                                    else if(this.state.currentAlgo==="aStar"){
-                                        this.aStarSetter();
-                                    }
+                                    this.setter();
                                     }}></input>
                             </div>
                         </div>
@@ -832,7 +738,6 @@ class Graph extends React.Component{
 
                 <div id="graphIntroContainer" style={{display:this.state.introDivToggle}}>
                     <div id="graphIntroTitle">Intro of Graph</div>
-
                     <div id="startIntro">
                         <div id="startIntroBox"></div>
                         <div id="startIntroText">&nbsp;:&nbsp;Start</div>
@@ -860,108 +765,10 @@ class Graph extends React.Component{
                 </div>
                 
                 <div id="graphContainer" 
-                    onMouseDown={(e)=>{
-                        e.preventDefault();
-                        this.setState({
-                            keypress:true
-                        })
-                        if(e.target.className==="startVertex"){
-                            this.setState({
-                                cStart:true
-                            })
-                        }
-                        if(e.target.className==="endVertex"){
-                            this.setState({
-                                cEnd:true
-                            })
-                        }
-                    }}
-                    onMouseUp={(e)=>{
-                        e.preventDefault();
-                        this.setState({
-                            keypress:false
-                        })
-                        if(this.state.cStart){
-                            this.setState({
-                                cStart:false,
-                                start:e.target.id
-                            })
-                            this.resetAll();
-                        }
-                        if(this.state.cEnd){
-                            this.setState({
-                                cEnd:false,
-                                end:e.target.id
-                            })
-                            this.resetAll();
-                        }
-                    }}
-                    onMouseMove={(e)=>{
-                        e.preventDefault();
-                        if(this.state.keypress){
-                            if(e.target.className==="vertex"){
-                                if(this.state.addWeightMode){
-                                    this.addWeight(e.target.id,this.state.addWeightNum);
-                                }
-                                else{
-                                    this.removeEdge(e.target.id);
-                                }
-                            }
-                            if(e.target.className==="visited"){
-                                if(this.state.addWeightMode){
-                                    this.addWeight(e.target.id,this.state.addWeightNum);
-                                }
-                                else{
-                                    this.removeEdge(e.target.id);
-                                }
-                            }
-                            if(e.target.className==="SPath"){
-                                //this.removeEdge(e.target.id);
-                                if(this.state.addWeightMode){
-                                    this.addWeight(e.target.id,this.state.addWeightNum);
-                                }
-                                else{
-                                    this.removeEdge(e.target.id);
-                                }
-                            }
-                            if(this.state.cStart){
-                                if(e.target.className!="endVertex"){
-                                    e.target.className="startVertex";
-                                    e.target.innerText="";
-                                }
-                            
-                            }
-                            if(this.state.cEnd){
-                                if(e.target.className!="startVertex"){
-                                    e.target.className="endVertex";
-                                    e.target.innerText="";
-                                }
-                            }
-                        }
-                    }}
-                    onMouseOut={(e)=>{
-                        e.preventDefault();
-                        if(this.state.cStart){
-                            if(e.target.className==="endVertex"){
-                                e.target.className="endVertex";
-                                e.target.innerText="";
-                            }
-                            else{
-                                e.target.className="vertex";
-                                e.target.innerText="";
-                            }
-                        }
-                        if(this.state.cEnd){
-                            if(e.target.className==="startVertex"){
-                                e.target.className="startVertex";
-                                e.target.innerText="";
-                            }
-                            else{
-                                e.target.className="vertex";
-                                e.target.innerText="";
-                            }
-                        }
-                    }}
+                    onMouseDown={this.listenStartPress}
+                    onMouseUp={this.listenMouseUp}
+                    onMouseMove={this.listenMouseMove}
+                    onMouseOut={this.listenMouseOut}
                 >
                     {graphData.map(item=>{
                         return <div key={"row"+item[0]}>{item.map(vertex=>{
@@ -1004,5 +811,4 @@ class Graph extends React.Component{
         )
     }
 }
-
 export default Graph;
