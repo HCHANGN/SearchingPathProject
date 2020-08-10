@@ -26,7 +26,7 @@ module.exports = {
                       limit:8162
                   }
                 }
-              }
+            }
         ]
     },
     devServer: {
