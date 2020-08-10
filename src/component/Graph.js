@@ -1,6 +1,6 @@
 import React from "react";
-import "./Graph.css";
-import WeightedAlgo from "./WeightedAlgo";
+import "../style/Graph.css"
+import WeightedAlgo from "../WeightedAlgo";
 
 class Graph extends React.Component{
     constructor(props){

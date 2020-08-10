@@ -32,7 +32,7 @@ a{
     /* background: url("https://i.ibb.co/xS5VM63/BG2.gif") no-repeat center; */
     /* background: url("https://i.ibb.co/b1LkvXW/BG3.gif") no-repeat center; */
     /* background: url("https://i.ibb.co/0hpXm9C/BG4.gif") no-repeat center; */
-    background: url("./img/BG4.gif") no-repeat center;
+    background: url("../img/BG4.gif") no-repeat center;
     background-size: cover;
     filter: grayscale(1);
     z-index: -1;
@@ -53,7 +53,7 @@ a{
     font-size: 30px;
     font-weight: 300;
     z-index: 10;
-    background: url("./img/toTopIcon.svg") no-repeat center;
+    background: url("../img/toTopIcon.svg") no-repeat center;
     background-size: cover;
     opacity: 0.5;
     cursor: pointer;
@@ -162,42 +162,42 @@ a{
 #imgIntro{
     width:300px;
     height:300px;
-    background: url("./img/BGIntro3.gif") no-repeat center;
+    background: url("../img/BGIntro3.gif") no-repeat center;
     background-size: cover;
 }
 
 #imgGrid{
     width:300px;
     height:300px;
-    background: url("./img/GridDes.gif") no-repeat center;
+    background: url("../img/GridDes.gif") no-repeat center;
     background-size: cover;
 }
 
 #imgDFS{
     width:300px;
     height:300px;
-    background: url("./img/DFSIMG.gif") no-repeat center;
+    background: url("../img/DFSIMG.gif") no-repeat center;
     background-size: cover;
 }
 
 #imgBFS{
     width:300px;
     height:300px;
-    background: url("./img/BFSIMG.gif") no-repeat center;
+    background: url("../img/BFSIMG.gif") no-repeat center;
     background-size: cover;
 }
 
 #imgDijk{
     width:300px;
     height:300px;
-    background: url("./img/DijkIMG.gif") no-repeat center;
+    background: url("../img/DijkIMG.gif") no-repeat center;
     background-size: cover;
 }
 
 #imgAstar{
     width:400px;
     height:200px;
-    background: url("./img/BGAStar2.gif") no-repeat center;
+    background: url("../img/BGAStar2.gif") no-repeat center;
     background-size: cover;
 }
 
