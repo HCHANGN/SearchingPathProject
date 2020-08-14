@@ -5,7 +5,7 @@ Path Searching App is a demonstration app which can visualize various type of gr
 圖形演算法視覺化是一個利用簡單的網格展示四種基本圖形資料結構的演算法的網站, 目前可使用深度優先, 廣度優先, 戴克斯特拉及 A* 搜尋演算法進行視覺化.
 
 Website Link: https://pathsearchingapp.co/
-or simply search Path Searching App on google.
+or simply search "Path Searching App" on google.
 
 
 # Technologies
@@ -33,4 +33,5 @@ or simply search Path Searching App on google.
   * Nginx
   * PM2
   
-#Website demo
+# Website demo
+[HomePage](https://ibb.co/GdYwmzq "HomePage")
