@@ -34,4 +34,15 @@ or simply search "Path Searching App" on google.
   * PM2
   
 # Website demo
+
+Home page shows explanation and demonstration about graph data structure and Depth First Search, Breadth First Search, Dijkstra's and A* algorithm used in this app. 
 ![HomePage](https://github.com/HCHANGN/SearchingPathProject/blob/master/Readme1.gif "HomePage")
+
+* Press start in home page to start app.
+* Drag start and end vertex to move position.
+* Click on the empty vertex to add wall or weight.
+* Control the animation of graph and input detail by control bar on top.
+* Add random maze of wall and weight supported.
+![GraphPage](https://github.com/HCHANGN/SearchingPathProject/blob/master/Readme3.gif "GraphPage")
+
+# To Do Next
